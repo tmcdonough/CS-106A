@@ -1,0 +1,9 @@
+2a)
+
+5.0/4-4/5:		1.25
+7<9 - 5 && 3%0 == 3:	false
+"B" + 8 + 4		error [got this wrong]
+
+2b)
+
+got both of these wrong
