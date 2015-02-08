@@ -47,7 +47,14 @@ public class NameSurferDataBase implements NameSurferConstants {
  * method returns null.
  */
 	public NameSurferEntry findEntry(String name) {
-		return database.get(name);
+		if(database.containsKey(name)){
+			return database.get(name);
+		} else {
+			String entryString = name+" 0 0 0 0 0 0 0 0 0 0 0";
+			NameSurferEntry blankEntry = new NameSurferEntry(entryString);
+			return blankEntry;
+		}
+		
 	}
 	
 	private HashMap<String,NameSurferEntry> database;

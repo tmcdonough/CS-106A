@@ -65,6 +65,10 @@ public class NameSurferEntry implements NameSurferConstants {
 		int decadeScore = ranks.get(decade);
 		return decadeScore;
 	}
+	
+	public HashMap<Integer,Integer> getScores(){
+		return ranks;
+	}
 
 /* Method: toString() */
 /**
