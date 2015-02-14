@@ -13,7 +13,15 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class FacePamphlet extends ConsoleProgram // console program only for testing - remove once canvas completed 
+// CURRENT STATUS:
+// Something is wrong with the Canvas
+// Program works fine in console mode
+// When you implement the canvas, first off some of the images are placed incorrectly.
+// Second, getting error messages throughout as you hit the buttons.
+// Also, showMessage does not display when you add a profile.
+
+
+public class FacePamphlet extends /*Console*/Program // console program only for testing - remove once canvas completed 
 					implements FacePamphletConstants {
 
 	/**
@@ -34,6 +42,8 @@ public class FacePamphlet extends ConsoleProgram // console program only for tes
 		// You fill this in
 		
 		db = new FacePamphletDatabase();
+		canvas = new FacePamphletCanvas();
+		add(canvas);
 		
 		// North
 		nameLabel = new JLabel(nameLabelText);
@@ -86,36 +96,48 @@ public class FacePamphlet extends ConsoleProgram // console program only for tes
 		// You fill this in as well as add any additional methods
     	String cmd = e.getActionCommand();
 		if (cmd == addButtonText && !nameField.getText().equals("")){
-			println(addProfile(nameField.getText()));
-			currentProfile = nameField.getText();
+			canvas.showMessage(addProfile(nameField.getText()));
 		} else if (cmd == delButtonText && !nameField.getText().equals("")){
-			println(delProfile(nameField.getText()));
-			currentProfile = null;
+			canvas.showMessage(delProfile(nameField.getText()));
+			//println(delProfile(nameField.getText()));
 		} else if (cmd == lookupButtonText && !nameField.getText().equals("")){
-			println(lookupProfile(nameField.getText()));
+			canvas.showMessage(lookupProfile(nameField.getText()));
+			//println(lookupProfile(nameField.getText()));
 		} else if (cmd == statusButtonText && !statusField.getText().equals("")){
-			println(changeStatus(statusField.getText()));
+			canvas.showMessage(changeStatus(statusField.getText()));
+			//println(changeStatus(statusField.getText()));
 		} else if (cmd == pictureButtonText && !pictureField.getText().equals("")){
-			println(changePicture(pictureField.getText()));
+			canvas.showMessage(changePicture(pictureField.getText()));
+			//println(changePicture(pictureField.getText()));
 		} else if (cmd == friendButtonText && !friendField.getText().equals("")){
-			println(addFriend(friendField.getText()));	
+			canvas.showMessage(addFriend(friendField.getText()));
+			//println(addFriend(friendField.getText()));
 		}
 	}
     
     private String addProfile(String profileName){
     	if(db.containsProfile(profileName)){
+    		currentProfile = profileName;
+    		canvas.displayProfile(db.getProfile(currentProfile));
 			return "Profile already exists: "+db.getProfile(profileName).toString();
 		} else {
 			db.addProfile(new FacePamphletProfile(profileName));
-			return "Add new profile: "+db.getProfile(profileName).toString();
+			currentProfile = profileName;
+    		canvas.displayProfile(db.getProfile(currentProfile));
+			return "Added new profile: "+profileName;
 		}
+    	
     }
     
     private String delProfile(String profileName){
     	if(db.containsProfile(profileName)){
     		db.deleteProfile(profileName);
+    		currentProfile = null;
+    		canvas.clearDisplay();
     		return profileName+"'s profile has been deleted.";
     	} else {
+    		currentProfile = null;
+    		canvas.clearDisplay();
     		return "Profile with name "+profileName+" does not exist.";
     	}
     }
@@ -123,9 +145,11 @@ public class FacePamphlet extends ConsoleProgram // console program only for tes
     private String lookupProfile(String profileName){
     	if(db.containsProfile(profileName)){
     		currentProfile = profileName;
+    		canvas.displayProfile(db.getProfile(currentProfile));
     		return "Lookup: "+db.getProfile(profileName).toString();
     	} else {
     		currentProfile = null;
+    		canvas.clearDisplay();
     		return "Profile with name "+profileName+" does not exist.";
     	}
     }
@@ -144,6 +168,7 @@ public class FacePamphlet extends ConsoleProgram // console program only for tes
     			return addedFriend+" is already a friend of "+currentProfile;
     		}
     		db.getProfile(addedFriend).addFriend(currentProfile);
+    		canvas.displayProfile(db.getProfile(currentProfile));
     		return "Added friend "+addedFriend+" to "+currentProfile+"'s profile.";
     	}
     }
@@ -153,6 +178,7 @@ public class FacePamphlet extends ConsoleProgram // console program only for tes
     		return "Please select a profile before updating status.";
     	}
     	db.getProfile(currentProfile).setStatus(statusUpdate);
+    	canvas.displayProfile(db.getProfile(currentProfile));
     	return "Updated "+currentProfile+"'s status: "+statusUpdate;
     }
     
@@ -167,12 +193,12 @@ public class FacePamphlet extends ConsoleProgram // console program only for tes
     		return "Cannot find that picture file...";
     	}
     	db.getProfile(currentProfile).setImage(image);
+    	canvas.displayProfile(db.getProfile(currentProfile));
     	return "Updated "+currentProfile+"'s picture";
     }
     
     /* ivars */
     private String currentProfile;
-    private String currentStatus;
     private JLabel nameLabel;
     private JTextField nameField;
     private JButton addButton;
@@ -186,4 +212,5 @@ public class FacePamphlet extends ConsoleProgram // console program only for tes
     private JButton friendButton;
     
     private FacePamphletDatabase db;
+    private FacePamphletCanvas canvas;
 }
